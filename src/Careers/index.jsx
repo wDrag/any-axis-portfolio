@@ -1,49 +1,22 @@
+import { useEffect, useState } from "react";
+import axios from 'axios';
 
 const Carreers = () => {
 
-    const CategoryList = [
-        {
-            CategoryName: `Engineering & Trading`,
-            JobsList: [
-                {
-                    JobTitle: `Senior Software Engineer`,
-                    Location: `SINGAPORE`,
-                    id: 1
-                },
-                {
-                    JobTitle: `Senior Software Engineer`,
-                    Location: `SINGAPORE`,
-                    id: 2
-                },
-                {
-                    JobTitle: `Senior Software Engineer`,
-                    Location: `SINGAPORE`,
-                    id: 3
-                }
-            ]
-        },
-        {
-            CategoryName: `Finance & Accounting`,
-            JobsList: [
-                {
-                    JobTitle: `Finance Manager`,
-                    Location: `SINGAPORE`,
-                    id: 4
-                },
-                {
-                    JobTitle: `Finance Manager`,
-                    Location: `SINGAPORE`,
-                    id: 5
-                },
-                {
-                    JobTitle: `Finance Manager`,
-                    Location: `SINGAPORE`,
-                    id: 6
-                }
-            ]
-        }
+    const [CategoryList, setCategoryList] = useState([])
 
-    ];
+    useEffect(() => {
+        const fetchCategoryList = async () => {
+            try {
+                const response = await axios.get(import.meta.env.VITE_API_ENDPOINT + '/careers');
+                setCategoryList(response.data);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+        fetchCategoryList();
+    }, []);
 
     return (
         <div className="container2">
@@ -69,30 +42,6 @@ const Carreers = () => {
                     </div>
                 );
             })}
-            {/* <div className="job-category">
-                <h1 className="heading-10">Engineering &amp; Trading</h1>
-                <a
-                    href="../career-details/careers-details.html"
-                    className="job w-inline-block"
-                >
-                    <div className="div-block-24">
-                        <div className="textblockk">Senior Software Engineer</div>
-                        <div className="caption">SINGAPORE</div>
-                    </div>
-                </a>
-                <div className="job">
-                    <div className="div-block-24">
-                        <div className="textblockk">Senior Software Engineer</div>
-                        <div className="caption">SINGAPORE</div>
-                    </div>
-                </div>
-                <div className="job">
-                    <div className="div-block-24">
-                        <div className="textblockk">Senior Software Engineer</div>
-                        <div className="caption">SINGAPORE</div>
-                    </div>
-                </div>
-            </div> */}
         </div>
     );
 }

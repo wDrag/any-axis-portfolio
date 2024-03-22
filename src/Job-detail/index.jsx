@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from 'axios';
 
 const JobDetail = () => {
 
@@ -12,14 +13,20 @@ const JobDetail = () => {
 
 
     useEffect(() => {
-        setJobDetailObject({
-            JobTitle: 'Senior Software Engineer',
-            Location: 'SINGAPORE',
-            JobDescription: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum excepturi officiis repellat eveniet eaque dolores ipsam expedita corporis ducimus provident soluta rerum doloribus sunt, nulla quia nobis, delectus, nam fugit.',
-            JobOccupation: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi officiis, esse dolorum nemo sint iusto accusantium aliquam laborum odit, corporis asperiores, est nisi iure amet similique aspernatur voluptatum omnis. Maxime.',
-            JobQualification: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi officiis, esse dolorum nemo sint iusto accusantium aliquam laborum odit, corporis asperiores, est nisi iure amet similique aspernatur voluptatum omnis. Maxime.',
-            AboutCompany: 'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum excepturi officiis repellat eveniet eaque dolores ipsam expedita corporis ducimus provident soluta rerum doloribus sunt, nulla quia nobis, delectus, nam fugit.'
-        })
+        const fetchJobDetail = async () => {
+            try {
+                const response = await axios.get(import.meta.env.VITE_API_ENDPOINT + '/careers/jobDetails/', {
+                    params: {
+                        jobId: jobId
+                    }
+                });
+                setJobDetailObject(response.data);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        }
+        fetchJobDetail();
     }, [])
 
     return (

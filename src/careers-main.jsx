@@ -7,6 +7,8 @@ root.render(
   <Careers />
 )
 
-if (window.location.pathname !== '/careers-details.html') {
+console.log(window.location.pathname);
+
+if (window.location.pathname !== '/career-details/careers.html') {
   root.unmount();
 }
