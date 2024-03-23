@@ -31150,8 +31150,8 @@ __p+='`),
           X || (X = e.data(k, s, { form: W })), S(X);
           var U = W.closest("div.w-form");
           (X.done = U.find("> .w-form-done")),
-            (X.fail = U.find("> .w-form-fail")),
-            (X.fileUploads = U.find(".w-file-upload")),
+          (X.fail = U.find("> .w-form-fail")),
+          (X.fileUploads = U.find(".w-file-upload")),
             X.fileUploads.each(function (ie) {
               H(ie, X);
             });
