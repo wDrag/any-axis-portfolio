@@ -7,8 +7,6 @@ const JobDetail = () => {
 
     const jobId = new URLSearchParams(queryString).get('jobId');
 
-    console.log(jobId);
-
     const [jobDetailObject, setJobDetailObject] = useState({});
 
 
@@ -48,22 +46,55 @@ const JobDetail = () => {
             ...prevState,
             [name]: value
         }));
-    };
-
-    const handleSubmit = async () => {
         const now = new Date().toISOString();
         setFormData((prevState) => ({
             ...prevState,
             time: now
         }));
+    };
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const debounce = (func, delay) => {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, delay);
+        };
+    }
+
+    const handleSubmit = async () => {
+        if (isSubmitting === true) {
+            return;
+        }
+        setIsSubmitting(true);
+        document.getElementById('pendingMsg').style.display = 'block';
         try {
             const response = await axios.post(import.meta.env.VITE_API_ENDPOINT + '/careers/apply/', {
                 formData
             });
+            setIsSubmitting(false);
+            document.getElementById('pendingMsg').style.display = 'none';
             console.log(response.data);
             if (response.status === 200) {
                 document.getElementById('successMsg').style.display = 'block';
                 document.getElementById('failMsg').style.display = 'none';
+                setFormData({
+                    time: "",
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    phone: "",
+                    resume: "",
+                    coverLetter: "",
+                    linkedin: "",
+                    website: "",
+                    jobId: jobId,
+                });
+                document.getElementById('email-form').reset();
+                setTimeout(() => {
+                    document.getElementById('successMsg').style.display = 'none';
+                }, 5000);
             }
             else {
                 document.getElementById('successMsg').style.display = 'none';
@@ -72,6 +103,8 @@ const JobDetail = () => {
         }
         catch (error) {
             console.error(error);
+            setIsSubmitting(false);
+            document.getElementById('pendingMsg').style.display = 'none';
         }
     }
 
@@ -116,7 +149,9 @@ const JobDetail = () => {
                                 id="firstName"
                                 required=""
                                 value={formData.firstName}
-                                onChange={handleInputChange}
+                                onChange={(e) => {
+                                    debounce(handleInputChange(e), 300);
+                                }}
                             />
                             <input
                                 className="text-field-2 w-input"
@@ -128,7 +163,9 @@ const JobDetail = () => {
                                 id="lastName"
                                 required=""
                                 value={formData.lastName}
-                                onChange={handleInputChange}
+                                onChange={(e) => {
+                                    debounce(handleInputChange(e), 300);
+                                }}
                             />
                         </div>
                         <input
@@ -141,7 +178,9 @@ const JobDetail = () => {
                             id="email"
                             required=""
                             value={formData.email}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                debounce(handleInputChange(e), 300);
+                            }}
                         />
                         <input
                             className="text-field-2 w-input"
@@ -149,10 +188,12 @@ const JobDetail = () => {
                             name="phone"
                             data-name="Phone"
                             placeholder="Phone"
-                            type="tel"
+                            type="text"
                             id="phone"
                             value={formData.phone}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                debounce(handleInputChange(e), 300);
+                            }}
                         />
                         <label htmlFor="resume" className="field-label-4">Resume/CV</label>
                         <input
@@ -165,7 +206,9 @@ const JobDetail = () => {
                             id="resume"
                             required=""
                             value={formData.resume}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                debounce(handleInputChange(e), 300);
+                            }}
                         />
                         <label htmlFor="coverLetter" className="field-label-4">Cover Letter</label>
                         <input
@@ -177,7 +220,9 @@ const JobDetail = () => {
                             type="tel"
                             id="coverLetter"
                             value={formData.coverLetter}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                debounce(handleInputChange(e), 300);
+                            }}
                         />
                         <label htmlFor="linkedin" className="field-label-4">Linkedin Profile</label>
                         <input
@@ -189,7 +234,9 @@ const JobDetail = () => {
                             type="tel"
                             id="linkedin"
                             value={formData.linkedin}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                debounce(handleInputChange(e), 300);
+                            }}
                         />
                         <label htmlFor="website" className="field-label-4">Website</label>
                         <input
@@ -201,13 +248,15 @@ const JobDetail = () => {
                             type="tel"
                             id="website"
                             value={formData.website}
-                            onChange={handleInputChange}
+                            onChange={(e) => {
+                                debounce(handleInputChange(e), 300);
+                            }}
                         />
                         <input
                             // type="submit"
                             onClick={(e) => {
                                 e.preventDefault();
-                                handleSubmit();
+                                debounce(handleSubmit(), 300);
                             }}
                             onChange={() => { }}
                             data-wait="Please wait..."
@@ -218,6 +267,11 @@ const JobDetail = () => {
                     <div id="successMsg" className="success-message w-form-done">
                         <div className="text-block-23">
                             Thank you! Your submission has been received!
+                        </div>
+                    </div>
+                    <div id="pendingMsg" className="pending-message w-form-pending">
+                        <div className="text-block-pending">
+                            Please wait while we process your application.
                         </div>
                     </div>
                     <div id="failMsg" className="error-message w-form-fail">
